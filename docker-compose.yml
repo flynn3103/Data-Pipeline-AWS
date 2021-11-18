@@ -15,7 +15,7 @@ services:
         restart: always
         image: sosedoff/pgweb
         ports: 
-            - "8081:8081" 
+            - "3000:3000" 
         links: 
             - postgres:postgres  # my database container is called postgres, not db
         environment:
@@ -58,3 +58,54 @@ services:
             - /tmp/airflow_logs:/root/airflow/logs
         command: scheduler
 
+    hadoop:
+        container_name: hadoop
+        build:
+            context: ./hadoop
+        restart: always
+        ports:
+            - "8088:8088"
+            - "50070:50070"
+            - "50075:50075"
+        volumes:
+            - ./sample:/var/log/sample
+            - ./configs/hosts:/etc/hosts
+            # - hadoop-node:/root/hdfs/
+        networks:
+            hadoop:
+                ipv4_address: 172.28.1.10
+
+    jupyterlab:
+        container_name: jupyterlab
+        build:
+            context: ./jupiter
+        ports:
+            - 8888:8888
+        volumes: 
+            - ./scripts:/opt/workspace
+        networks: 
+            - hadoop
+    
+    spark-master:
+        build:
+            context: ./spark/master
+        container_name: spark-master
+        ports:
+            - 8080:8080
+            - 7077:7077
+        networks: 
+            - hadoop
+    
+    spark-worker-1:
+        build:
+            context: ./spark/worker
+        container_name: spark-worker-1
+        environment:
+            - SPARK_WORKER_CORES=1
+            - SPARK_WORKER_MEMORY=512m
+        ports:
+            - 8081:8081
+        depends_on:
+            - spark-master
+        networks: 
+            - hadoop
