@@ -6,6 +6,10 @@ psycopg2==2.7.7
 psycopg2-binary==2.8.2
 apache-airflow
 celery
-numpy==1.15.4
-plotly==3.5.0
 pyspark==2.4.0
+sklearn==0.23.2
+confluent_kafka==1.0.1
+numpy==1.17.2
+pandas==0.24.2
+seaborn==0.10.1
+matplotlib==3.0.2

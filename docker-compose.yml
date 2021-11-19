@@ -91,7 +91,6 @@ services:
             context: ./spark/master
         container_name: spark-master
         ports:
-            - 8080:8080
             - 7077:7077
         networks: 
             - hadoop
